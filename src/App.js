@@ -16,6 +16,7 @@ class Counter {
   }
 }
 var RunCounter = new Counter();
+
 class App extends Component {
 
   constructor(props) {
@@ -26,7 +27,7 @@ class App extends Component {
   add = (value) => {
     let todoLists = this.state.todoLists;
     todoLists.push({
-      type: 0,
+      type: 0,   // 0 = doing & 1 = did
       content: value,
       id: RunCounter.count,
     })
