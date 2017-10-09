@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import { connect } from 'dva';
 
 class Counter {
   constructor() {
@@ -21,6 +22,10 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {todoLists: []};
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps.list);
   }
 
   add = (value) => {
@@ -140,4 +145,14 @@ class Lists extends Component {
   }
 }
 
-export default App;
+function mapStateToProps(state) {
+  const { list, total, page } = state.todoitems;
+  return {
+    loading: state.loading.models.todoitems,
+    list,
+    total,
+    page,
+  };
+}
+
+export default connect(mapStateToProps)(App);
