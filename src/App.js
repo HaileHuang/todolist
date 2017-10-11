@@ -1,27 +1,15 @@
 import React, { Component } from 'react';
 import './App.css';
 import { connect } from 'dva';
-
-class Counter {
-  constructor() {
-    this._count = 1;
-  }
-
-  up() {
-    this._count += 1;
-  }
-
-  get count() {
-    return this._count;
-  }
-}
-var RunCounter = new Counter();
+import { Spin } from 'antd';
+import Add from './components/Add';
+import Lists from './components/Lists';
+import { Button } from 'antd';
 
 class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {todoLists: []};
   }
 
   componentWillReceiveProps(nextProps) {
@@ -29,47 +17,37 @@ class App extends Component {
   }
 
   add = (value) => {
-    let todoLists = this.state.todoLists;
-    todoLists.push({
-      type: 0,   // 0 = doing & 1 = did
-      content: value,
-      id: RunCounter.count,
-    })
-    RunCounter.up();
-    this.setState({
-      todoLists
+    this.props.dispatch({
+      type: 'todoitems/create',
+      payload: {
+        title: value,
+        checked: false,
+      }
     })
   }
 
   del = (currentItem) => {
-    let todoLists = this.state.todoLists.filter((item) => {
-      return item.id !== currentItem.id;
-    })
-    this.setState({
-      todoLists
-    })
+    this.props.dispatch({
+      type: 'todoitems/remove',
+      payload: currentItem._id,
+    });
   }
 
   changeState = (currentItem) => {
-    let todoLists = this.state.todoLists.map((item) => {
-      if (item.id === currentItem.id) {
-        return {
-          ...currentItem,
-          type: !currentItem.type,
-        }
-      } else {
-        return item;
+    this.props.dispatch({
+      type: 'todoitems/update',
+      payload: {
+        id: currentItem._id,
+        title: currentItem.title,
+        checked: !currentItem.checked,
       }
-    })
-    this.setState({
-      todoLists
-    })
+    });
   }
 
   render() {
     let doingLists = [], didLists = [];
-    this.state.todoLists.forEach((item) => {
-      if (item.type) {
+    this.props.list.forEach((item) => {
+      if (item.checked) {
         didLists.push(item);
       } else {
         doingLists.push(item);
@@ -80,79 +58,42 @@ class App extends Component {
         <div className="App-header">
           <h2>Welcome to React</h2>
         </div>
-        <Add add={this.add} />
-        <h4>Doing</h4>
-        <Lists 
-          lists={doingLists} 
-          onClick={this.changeState}
-          del={this.del}
-        />
-        <h4>Did</h4>
-        <Lists
-          lists={didLists}
-          onClick={this.changeState}
-          del={this.del}
-        />
+        {
+          this.props.loading ? 
+          <div className="spain-load">
+            <Spin />
+          </div> :
+          <div className="content">
+            <Add add={this.add} />
+            <h1 style={{textAlign: "left", marginTop: 30}}>Doing</h1>
+            <Lists 
+              lists={doingLists} 
+              onClick={this.changeState}
+              del={this.del}
+            />
+            <h1 style={{textAlign: "left", marginTop: 30}}>Did</h1>
+            <Lists
+              lists={didLists}
+              onClick={this.changeState}
+              del={this.del}
+            />
+          </div>
+        }
       </div>
     );
   }
 }
 
-class Add extends Component {
-  handleClick = () => {
-    if(this.refs.content.value) {
-      this.props.add(this.refs.content.value);
-      this.refs.content.value = "";
-    }
-  }
-
-  render() {
-    return (
-      <div>
-        <button onClick={this.handleClick}>Add</button>
-        <input type="text" ref="content"/>
-      </div>
-    )
-  }
-}
-
-class Lists extends Component {
-
-  handleClick = (item) => {
-    this.props.onClick(item);
-  }
-
-  handleDel = (item) => {
-    this.props.del(item);
-  }
-
-  render() {
-    return (
-      <ul style={{listStyleType: 'none'}}>
-      {
-        this.props.lists.map((item, i) => {
-          return (
-            <li key={i}>
-              <input type="checkbox" checked={item.type} onChange={this.handleClick.bind(this, item)}/>
-              {item.content}
-              <button onClick={this.handleDel.bind(this, item)}>Del</button>
-            </li>
-          )
-        })
-      }
-      </ul>
-    )
-  }
-}
-
 function mapStateToProps(state) {
-  const { list, total, page } = state.todoitems;
+  const { list } = state.todoitems;
   return {
     loading: state.loading.models.todoitems,
     list,
-    total,
-    page,
   };
 }
 
-export default connect(mapStateToProps)(App);
+function mapDispatchToProps(dispatch) {
+  return {dispatch,};
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

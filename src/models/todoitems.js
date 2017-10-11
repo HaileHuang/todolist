@@ -4,25 +4,33 @@ export default {
   namespace: 'todoitems',
   state: {
     list: [],
-    total: null,
-    page: null,
   },
   reducers: {
-    save(state, { payload: { data: list, total, page } }) {
-      return { ...state, list, total, page };
+    save(state, { payload: { data: list } }) {
+      return { ...state, list };
     },
   },
   effects: {
-    *fetch({ payload: { page = 1 } }, { call, put }) {
-      const { data, headers } = yield call(usersService.fetch, { page });
+    *fetch({ payload: haha }, { call, put }) {
+      const { data, headers } = yield call(usersService.fetch, {});
       yield put({
         type: 'save',
         payload: {
-          data,
-          total: parseInt(headers['x-total-count'], 10),
-          page: parseInt(page, 10),
+          data
         },
       });
+    },
+    *remove({ payload: id }, { call, put }) {
+      yield call(usersService.remove, id);
+      yield put({ type: 'fetch', payload: '' });
+    },
+    *update({ payload: { id, title, checked } }, { call, put }) {
+      yield call(usersService.update, id, title, checked);
+      yield put({ type: 'fetch', payload: '' });
+    },
+    *create({ payload: { title, checked } }, { call, put }) {
+      yield call(usersService.create, title, checked);
+      yield put({ type: 'fetch', payload: '' });
     },
   },
   subscriptions: {

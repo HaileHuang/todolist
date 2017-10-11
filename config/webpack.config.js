@@ -4,7 +4,7 @@ var path = require('path');
 
 var config = {
   devtool: 'eval-source-map',
-  entry: path.join(__dirname, '../src/index.js'),
+  entry: ['babel-polyfill', path.join(__dirname, '../src/index.js')],
   output: {
     path:  path.join(__dirname, '../public'),
     filename: 'bundle.js'
@@ -18,6 +18,13 @@ var config = {
                     options: {
                         presets: [
                             "es2015", "stage-1", "react"
+                        ],
+                        plugins: [
+                            "dva-hmr", 
+                            [
+                                "import", 
+                                { "libraryName": "antd", "style": true }
+                            ]
                         ]
                     }
                 },
@@ -28,8 +35,23 @@ var config = {
                 use: [
                     {
                         loader: "style-loader"
-                    }, {
+                    },
+                    {
                         loader: "css-loader"
+                    }
+                ]
+            },
+            {
+                test: /\.less$/,
+                use: [
+                    {
+                        loader: "style-loader"
+                    },
+                    {
+                        loader: "css-loader"
+                    },
+                    {
+                        loader: "less-loader" // compiles Less to CSS
                     }
                 ]
             }

@@ -18,6 +18,38 @@
   font-size: large;
 }
 
+.spain-load {
+  text-align: center;
+  width: 100%;
+  height: 200px;
+}
+
+.content {
+  width: 300px;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+.add {
+  display: flex;
+  justify-content: space-between;
+}
+
+.listitem {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.listitem input {
+  margin-right: 20px;
+  font-size: 20px;
+}
+
+.listitem span {
+  line-height: 28px;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
