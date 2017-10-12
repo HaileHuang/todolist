@@ -1,4 +1,5 @@
 import fetch from 'dva/fetch';
+import hpFetch from './hpFetch';
 
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
@@ -18,19 +19,15 @@ function checkStatus(response) {
  * @return {object}           An object containing either "data" or "err"
  */
 export default async function request(url, options) {
-  const response = await fetch(url, options);
-
+  const response = await hpFetch(url, options);
   checkStatus(response);
-
-  const data = await response.json();
-
+  const data = JSON.parse(response.responseText);
   const ret = {
     data,
     headers: {},
   };
-
-  if (response.headers.get('x-total-count')) {
-    ret.headers['x-total-count'] = response.headers.get('x-total-count');
+  if (response.getResponseHeader('x-total-count')) {
+    ret.headers['x-total-count'] = response.getResponseHeader('x-total-count');
   }
 
   return ret;
