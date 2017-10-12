@@ -12,10 +12,6 @@ class App extends Component {
     super(props);
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log(nextProps.list);
-  }
-
   add = (value) => {
     this.props.dispatch({
       type: 'todoitems/create',
@@ -45,10 +41,10 @@ class App extends Component {
   }
 
   render() {
-    let doingLists = [], didLists = [];
+    let doingLists = [], doneLists = [];
     this.props.list.forEach((item) => {
       if (item.checked) {
-        didLists.push(item);
+        doneLists.push(item);
       } else {
         doingLists.push(item);
       }
@@ -71,9 +67,9 @@ class App extends Component {
               onClick={this.changeState}
               del={this.del}
             />
-            <h1 style={{textAlign: "left", marginTop: 30}}>Did</h1>
+            <h1 style={{textAlign: "left", marginTop: 30}}>Done</h1>
             <Lists
-              lists={didLists}
+              lists={doneLists}
               onClick={this.changeState}
               del={this.del}
             />
